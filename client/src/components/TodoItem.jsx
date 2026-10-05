@@ -2,17 +2,22 @@ import { useState } from "react";
 
 function TodoItem({ todo, onUpdate, onDelete }) {
   const [isEditing, setIsEditing] = useState(false);
-  const [text, setText] = useState(todo.title);
+  // 1. Change todo.title to todo.text
+  const [text, setText] = useState(todo.text);
 
   const handleSave = () => {
-    const title = text.trim();
-    if (title && title !== todo.title) onUpdate(todo._id, { title });
-    else setText(todo.title);
+    const newText = text.trim();
+    // 2. Change title to text in the payload
+    if (newText && newText !== todo.text) {
+      onUpdate(todo._id, { text: newText });
+    } else {
+      setText(todo.text);
+    }
     setIsEditing(false);
   };
 
   const handleCancel = () => {
-    setText(todo.title);
+    setText(todo.text);
     setIsEditing(false);
   };
 
@@ -22,9 +27,8 @@ function TodoItem({ todo, onUpdate, onDelete }) {
         type="checkbox"
         checked={todo.completed}
         onChange={() => onUpdate(todo._id, { completed: !todo.completed })}
-        aria-label={`Mark "${todo.title}" as ${todo.completed ? "not done" : "done"}`}
+        aria-label={`Mark "${todo.text}" as ${todo.completed ? "not done" : "done"}`}
       />
-
       {isEditing ? (
         <input
           className="edit-input"
@@ -39,7 +43,8 @@ function TodoItem({ todo, onUpdate, onDelete }) {
         />
       ) : (
         <div className="todo-text" onDoubleClick={() => setIsEditing(true)}>
-          <span className="title">{todo.title}</span>
+          {/* 3. Render todo.text here */}
+          <span className="title">{todo.text}</span>
           <span className="meta">
             Added{" "}
             {new Date(todo.createdAt).toLocaleDateString(undefined, {
@@ -49,7 +54,6 @@ function TodoItem({ todo, onUpdate, onDelete }) {
           </span>
         </div>
       )}
-
       {!isEditing && (
         <div className="actions">
           <button onClick={() => setIsEditing(true)}>Edit</button>
